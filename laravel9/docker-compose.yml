@@ -1,0 +1,41 @@
+version: '3'
+services:
+ app:
+  container_name: app
+  image: ggmartinez/laravel:9-php7
+  restart: unless-stopped
+  tty: true
+  ports:
+    - 8000:8000
+  volumes:
+    - ./src/app:/app
+    - ./development/php/laravel.ini:/usr/local/etc/php/conf.d/laravel.ini
+
+ webserver:
+  image: nginx:alpine
+  container_name: webserver
+  restart: unless-stopped
+  tty: true
+  ports:
+   - 80:80
+   - 443:443
+  volumes:
+   - ./src/public:/var/www/public
+   - ./development/nginx/conf.d/:/etc/nginx/conf.d/
+
+ db:
+  container_name: db
+  image: mysql:5.7.32
+  restart: unless-stopped
+  tty: true
+  ports:
+   - 3306:3306
+  environment:
+   MYSQL_DATABASE: practico
+   MYSQL_ROOT_PASSWORD: root1234
+   SERVICE_TAGS: dev
+   SERVICE_NAME: mysql
+  volumes:
+   - ./mysql/data:/var/lib/mysql/
+   - ./development/mysql/my.cnf:/etc/mysql/my.cnf
+
